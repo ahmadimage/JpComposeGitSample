@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">JpComposeGitSample</string>
+    <string name="hello_message">Hello master coding app</string>
+    <string name="download_message">Download master coding app</string>
 </resources>
