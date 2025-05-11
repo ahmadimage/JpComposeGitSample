@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -57,6 +56,9 @@ fun Greeting(
     modifier: Modifier = Modifier,
     context: Context? = null
 ) {
+    var text by remember {
+        mutableStateOf("")
+    }
     Column(
         modifier = modifier
             .padding(9.dp)
@@ -88,7 +90,8 @@ fun Greeting(
         BaseButtonComposable(context, modifier) { clickMessage ->
             Toast.makeText(context, clickMessage, Toast.LENGTH_SHORT).show()
         }
-        BaseTextField(modifier = modifier)
+        //BaseTextField(modifier = modifier)
+        BaseStatelessTextField(text = text, onTextChange = { newValue -> text = newValue }, modifier = modifier)
         Counter(modifier)
     }
 }
@@ -136,6 +139,23 @@ fun BaseTextField(modifier: Modifier = Modifier) {
             label = { Text("Enter Text") }
         )
         Text(text = "You typed:${text.text}")
+    }
+}
+
+@Composable
+fun BaseStatelessTextField(
+    text: String,
+    onTextChange: (String) -> Unit,
+    modifier: Modifier
+) {
+    Column {
+        TextField(
+            value = text,
+            onValueChange = onTextChange,
+            modifier = modifier.width(120.dp),
+            label = { Text("Enter Text") }
+        )
+        Text(text = "You entered: $text")
     }
 }
 
