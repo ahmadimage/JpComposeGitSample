@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,7 +37,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val context = this
-        enableEdgeToEdge()
+        //enableEdgeToEdge()
         setContent {
             JpComposeGitSampleTheme {
                 Greeting(
@@ -84,8 +85,11 @@ fun Greeting(
             fontSize = 8.sp
         )
         BaseImageComposable(modifier)
-        BaseButtonComposable(context, modifier)
+        BaseButtonComposable(context, modifier) { clickMessage ->
+            Toast.makeText(context, clickMessage, Toast.LENGTH_SHORT).show()
+        }
         BaseTextField(modifier = modifier)
+        Counter(modifier)
     }
 }
 
@@ -99,17 +103,17 @@ fun BaseImageComposable(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun BaseButtonComposable(context: Context?, modifier: Modifier = Modifier) {
+fun BaseButtonComposable(context: Context?, modifier: Modifier = Modifier, onClick: (String) -> Unit = {}) {
     Button(
         onClick = {
-            Toast.makeText(context, "clicked", Toast.LENGTH_SHORT).show()
+            onClick("Regular button clicked")
         },
     ) {
         Text("button filled")
     }
     FilledTonalButton (
         onClick = {
-            Toast.makeText(context, "clicked", Toast.LENGTH_SHORT).show()
+            onClick("Filled button clicked")
         },
     ) {
         Text("button tonal")
@@ -122,14 +126,39 @@ fun BaseTextField(modifier: Modifier = Modifier) {
     var text by remember {
         mutableStateOf(TextFieldValue())
     }
+    Column {
+        TextField(
+            value = text,
+            onValueChange = { newValue ->
+                text = newValue
+            },
+            modifier = modifier.width(120.dp),
+            label = { Text("Enter Text") }
+        )
+        Text(text = "You typed:${text.text}")
+    }
+}
 
-    TextField(
-        value = text,
-        onValueChange = {
-            newValue -> text = newValue
-        },
-        modifier = modifier.width(120.dp),
-    )
+@Composable
+fun Counter(modifier: Modifier = Modifier) {
+    var count by remember {
+        mutableIntStateOf(0)
+    }
+    Column(modifier = modifier) {
+        Text(
+            text = count.toString(),
+            modifier = modifier
+                .padding(top = 9.dp, bottom = 9.dp, start = 10.dp, end = 2.dp),
+            fontSize = 20.sp,
+        )
+        Button(
+            onClick = {
+                count++
+            },
+        ) {
+            Text("counter ++")
+        }
+    }
 }
 
 @Preview(showBackground = true, device = Devices.NEXUS_10)
